@@ -1,0 +1,64 @@
+---
+#  This playbook written 10-8-2019 by Ron Whitt with GET
+#  This playbook uninstalls all deployments in the Next Generation Central Office (NGCO) Tenant 3  environment
+#  Note: Tenant 3's Cloudify instance is at 10.254.34.62
+#  The playbook is launched from the ATC tower instance and is accessible from AMS
+
+- name: Unisntall all deployments on Tenant 3
+  hosts: localhost
+  connection: local
+
+  vars:
+    wait_time_minutes: 5
+
+  tasks:
+    - name: Check that the Cloudify app is running
+      uri:
+        url: http://10.254.34.62/console/login
+
+    - name: Get list of deployments
+      uri:
+        url: http://10.254.34.62/api/v3.1/deployments?_include=id
+        user: "admin"
+        password: "cloudify"
+        method: GET
+        force_basic_auth: yes
+        body_format: json
+        return_content: yes
+        headers:
+          Tenant: "default_tenant"
+          accept: application/json
+      register: deps
+
+    - name: init fact deployments
+      set_fact: 
+        deployments: "{{ deps['json']['items'] }}"
+    - name: testprint
+      debug:
+        var: deployments
+
+    - name: uninstall deployments
+      uri:
+        url: http://10.254.34.62/api/v3.1/executions?_include=id
+        user: "admin"
+        password: "cloudify"
+        method: POST
+        force_basic_auth: yes
+        body_format: json
+        body: >
+          {"deployment_id":"{{ item.id }}", "workflow_id": "uninstall"}
+        return_content: yes
+        status_code: 201
+        headers:
+          Tenant: "default_tenant"
+          accept: application/json
+      register: uninstall_results
+      with_items: "{{ deployments }}"
+
+    - name: Wait for uninstall to finish
+      pause:
+        minutes: "{{ wait_time_minutes }}"
+
+    - name: show results
+      debug:
+        var: uninstall_results
