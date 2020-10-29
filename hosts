@@ -1,0 +1,5 @@
+[OROL]
+Site1-Optical ansible_host=10.253.22.48 ansible_ssh_user=admin ansible_ssh_pass=WWTwwt1! ansible_network_os=iosxr ansible_command_timeout=30
+Site2-Optical ansible_host=10.253.22.49 ansible_ssh_user=admin ansible_ssh_pass=WWTwwt1! ansible_network_os=iosxr ansible_command_timeout=30
+Site1-Router ansible_host=10.253.22.111 ansible_ssh_user=admin ansible_ssh_pass=WWTwwt1! ansible_network_os=iosxr ansible_command_timeout=30
+Site2-Router ansible_host=10.253.22.113 ansible_ssh_user=admin ansible_ssh_pass=WWTwwt1! ansible_network_os=iosxr ansible_command_timeout=30
