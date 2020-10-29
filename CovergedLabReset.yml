@@ -1,0 +1,16 @@
+---
+- name: initialize config
+  hosts: OROL
+  gather_facts: false
+  connection: network_cli
+  tasks:
+    - name: turn off interactive cli
+      iosxr_command:
+        commands:
+          - terminal cli interactive disable
+    - name: load a config from file from disk0 and replace the current config
+      iosxr_config:
+        lines:
+          - load disk0:/config/ConvergedLab-Step1.cfg
+          - commit replace
+
